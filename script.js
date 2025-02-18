@@ -6,7 +6,7 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
   const recommendationsList = document.getElementById("recommendations");
   recommendationsList.innerHTML = "";
 
-  const apiUrl = "https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/search"; // Correct API endpoint
+  const apiUrl = `https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/search?query=${encodeURIComponent(show1)}`;
   const apiKey = "cc8da86bfc4354139fcd7c62ca808e10"; // Replace with your actual RapidAPI key
 
   // Display a loading message
@@ -19,13 +19,9 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
         "X-RapidAPI-Key": apiKey,
         "X-RapidAPI-Host": "tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com"
-      },
-      body: JSON.stringify({
-        query: show1
-      })
+      }
     });
 
     if (!response.ok) {
@@ -46,7 +42,7 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
       // Display each recommendation with a reason
       recommendations.forEach((show) => {
         const listItem = document.createElement("li");
-        listItem.textContent = `${show.title} - You might like this because: ${reason}`;
+        listItem.textContent = `${show.title || show.name} - You might like this because: ${reason}`;
         recommendationsList.appendChild(listItem);
       });
     }
