@@ -2,38 +2,56 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
   event.preventDefault();
 
   const show1 = document.getElementById("show1").value;
-  const apiKey = "cc8da86bfc4354139fcd7c62ca808e10"; // Replace with your TMDB API Key
-
+  const reason = document.getElementById("reason").value;
   const recommendationsList = document.getElementById("recommendations");
   recommendationsList.innerHTML = "";
 
+  const apiUrl = "https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/search"; // Correct API endpoint
+  const apiKey = "cc8da86bfc4354139fcd7c62ca808e10"; // Replace with your actual RapidAPI key
+
+  // Display a loading message
+  const loadingMessage = document.createElement("li");
+  loadingMessage.textContent = "Loading recommendations...";
+  recommendationsList.appendChild(loadingMessage);
+
   try {
-    // Step 1: Search for the first show to get its ID
-    const searchResponse = await fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(show1)}&api_key=${apiKey}`);
-    const searchData = await searchResponse.json();
-
-    if (searchData.results.length === 0) {
-      throw new Error(`No TV show found for "${show1}".`);
-    }
-
-    const showId = searchData.results[0].id;
-
-    // Step 2: Get recommendations using the show ID
-    const recommendationResponse = await fetch(`https://api.themoviedb.org/3/tv/${showId}/recommendations?api_key=${apiKey}`);
-    const recommendationData = await recommendationResponse.json();
-
-    if (recommendationData.results.length === 0) {
-      recommendationsList.innerHTML = "<li>No recommendations found.</li>";
-      return;
-    }
-
-    recommendationData.results.forEach((show) => {
-      const listItem = document.createElement("li");
-      listItem.textContent = show.name;
-      recommendationsList.appendChild(listItem);
+    // Fetch recommendations using the API
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-RapidAPI-Key": apiKey,
+        "X-RapidAPI-Host": "tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com"
+      },
+      body: JSON.stringify({
+        query: show1
+      })
     });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch recommendations. Please try again.");
+    }
+
+    const data = await response.json();
+    const recommendations = data.results;
+
+    // Clear loading message
+    recommendationsList.innerHTML = "";
+
+    if (recommendations.length === 0) {
+      const noResultsMessage = document.createElement("li");
+      noResultsMessage.textContent = "No recommendations found.";
+      recommendationsList.appendChild(noResultsMessage);
+    } else {
+      // Display each recommendation with a reason
+      recommendations.forEach((show) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${show.title} - You might like this because: ${reason}`;
+        recommendationsList.appendChild(listItem);
+      });
+    }
   } catch (error) {
-    console.error("Error:", error);
-    recommendationsList.innerHTML = `<li>${error.message}</li>`;
+    console.error("Error fetching recommendations:", error);
+    recommendationsList.innerHTML = `<li>Error fetching recommendations. Try again later.</li>`;
   }
 });
