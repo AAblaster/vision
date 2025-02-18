@@ -1,3 +1,26 @@
+// Debugging snippet: Test API connectivity on page load
+fetch("https://tmdapi.p.rapidapi.com/tv/search", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "X-RapidAPI-Key": "YOUR_RAPIDAPI_KEY", // Replace with your actual key
+  },
+  body: JSON.stringify({ show1: "Breaking Bad", show2: "Stranger Things" }),
+})
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Debugging Error: Failed to fetch data. Status: " + response.status);
+    }
+    return response.json();
+  })
+  .then((data) => {
+    console.log("Debugging Data:", data); // Log the data for testing
+  })
+  .catch((error) => {
+    console.error("Debugging Error:", error);
+  });
+
+// Main form submission handler
 document.getElementById("show-form").addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -9,29 +32,32 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
   recommendationsList.innerHTML = "";
 
   try {
-    // API Call to RapidAPI
-    const response = await fetch("https://rapidapi.com", {
+    // API Call
+    const response = await fetch("https://tmdapi.p.rapidapi.com/tv/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-RapidAPI-Key": "3cc136d9a1msh29285498c6184d0p1b096fjsn793eaa8b38ba", // Replace with your key
+        "X-RapidAPI-Key": "YOUR_RAPIDAPI_KEY", // Replace with your actual key
       },
       body: JSON.stringify({ show1, show2 }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch recommendations");
+      const errorText = await response.text();
+      throw new Error(`Error: ${errorText}`);
     }
 
     const data = await response.json();
-    const recommendations = data.recommendations;
+    console.log("Form Submission Data:", data); // Log data for debugging
+
+    const recommendations = data.recommendations || [];
 
     if (recommendations.length === 0) {
       recommendationsList.innerHTML = "<li>No recommendations found.</li>";
       return;
     }
 
-    // Display recommendations
+    // Display each recommended show
     recommendations.forEach((show) => {
       const listItem = document.createElement("li");
       listItem.textContent = show.name;
@@ -39,6 +65,6 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
     });
   } catch (error) {
     console.error("Error:", error);
-    recommendationsList.innerHTML = "<li>Error fetching recommendations. Try again later.</li>";
+    recommendationsList.innerHTML = `<li>${error.message}</li>`;
   }
 });
