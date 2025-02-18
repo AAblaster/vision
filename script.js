@@ -17,7 +17,7 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
   try {
     // Fetch recommendations using the API
     const response = await fetch(apiUrl, {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         "X-RapidAPI-Key": apiKey,
