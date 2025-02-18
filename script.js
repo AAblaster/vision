@@ -1,26 +1,3 @@
-// Debugging snippet: Test API connectivity on page load
-fetch("https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/random", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-RapidAPI-Key": "3cc136d9a1msh29285498c6184d0p1b096fjsn793eaa8b38ba", // Replace with your actual key
-  },
-  body: JSON.stringify({ show1: "Breaking Bad", show2: "Stranger Things" }),
-})
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error("Debugging Error: Failed to fetch data. Status: " + response.status);
-    }
-    return response.json();
-  })
-  .then((data) => {
-    console.log("Debugging Data:", data); // Log the data for testing
-  })
-  .catch((error) => {
-    console.error("Debugging Error:", error);
-  });
-
-// Main form submission handler
 document.getElementById("show-form").addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -33,13 +10,13 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
 
   try {
     // API Call
-    const response = await fetch("https://tmdapi.p.rapidapi.com/tv/search", {
-      method: "POST",
+    const response = await fetch("https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/random", {
+      method: "GET", // Using GET because the image shows a GET request
       headers: {
         "Content-Type": "application/json",
-        "X-RapidAPI-Key": "3cc136d9a1msh29285498c6184d0p1b096fjsn793eaa8b38ba", // Replace with your actual key
+        "X-RapidAPI-Key": "3cc136d9a1msh29285498c6184d0p1b096fjsn793eaa8b38ba", // Your RapidAPI key
+        "X-RapidAPI-Host": "tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com"
       },
-      body: JSON.stringify({ show1, show2 }),
     });
 
     if (!response.ok) {
@@ -57,7 +34,6 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
       return;
     }
 
-    // Display each recommended show
     recommendations.forEach((show) => {
       const listItem = document.createElement("li");
       listItem.textContent = show.name;
