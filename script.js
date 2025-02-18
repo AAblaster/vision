@@ -10,7 +10,7 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
 
   try {
     // API Call to RapidAPI
-    const response = await fetch("https://tmdapi.p.rapidapi.com/tv/search", {
+    const response = await fetch("https://rapidapi.com", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
