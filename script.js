@@ -1,5 +1,5 @@
 // Debugging snippet: Test API connectivity on page load
-fetch("tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com", {
+fetch("https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/random", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
