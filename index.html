@@ -7,17 +7,25 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>TV Show Recommender</h1>
-  <form id="show-form">
-    <label for="show1">Enter First TV Show:</label>
-    <input type="text" id="show1" name="show1" required><br><br>
-    <label for="show2">Enter Second TV Show:</label>
-    <input type="text" id="show2" name="show2" required><br><br>
-    <button type="submit">Get Recommendations</button>
-  </form>
+  <div class="container">
+    <h1 class="title">TV Show Recommender</h1>
+    <form id="show-form">
+      <div class="input-group">
+        <label for="show1">Show Name</label>
+        <input type="text" id="show1" placeholder="Enter TV show name..." required>
+      </div>
+      <div class="input-group">
+        <label for="reason">Reason You Like It</label>
+        <input type="text" id="reason" placeholder="Why do you like this show?" required>
+      </div>
+      <button type="submit" class="submit-btn">Get Recommendations</button>
+    </form>
 
-  <h2>Recommended Shows:</h2>
-  <ul id="recommendations"></ul>
+    <div id="recommendations-container">
+      <h2>Recommendations</h2>
+      <ul id="recommendations" class="recommendations-list"></ul>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
