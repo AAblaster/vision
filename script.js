@@ -1,9 +1,9 @@
 // Debugging snippet: Test API connectivity on page load
-fetch("https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/random", {
+fetch("tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "X-RapidAPI-Key": "YOUR_RAPIDAPI_KEY", // Replace with your actual key
+    "X-RapidAPI-Key": "3cc136d9a1msh29285498c6184d0p1b096fjsn793eaa8b38ba", // Replace with your actual key
   },
   body: JSON.stringify({ show1: "Breaking Bad", show2: "Stranger Things" }),
 })
