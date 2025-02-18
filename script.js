@@ -14,7 +14,7 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-RapidAPI-Key": "YOUR_RAPIDAPI_KEY", // Replace with your key
+        "X-RapidAPI-Key": "3cc136d9a1msh29285498c6184d0p1b096fjsn793eaa8b38ba", // Replace with your key
       },
       body: JSON.stringify({ show1, show2 }),
     });
