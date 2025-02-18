@@ -2,39 +2,32 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
   event.preventDefault();
 
   const show1 = document.getElementById("show1").value;
-  const show2 = document.getElementById("show2").value;
+  const apiKey = "cc8da86bfc4354139fcd7c62ca808e10"; // Replace with your TMDB API Key
 
-  // Clear previous recommendations
   const recommendationsList = document.getElementById("recommendations");
   recommendationsList.innerHTML = "";
 
   try {
-    // API Call
-    const response = await fetch("https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/random", {
-      method: "GET", // Using GET because the image shows a GET request
-      headers: {
-        "Content-Type": "application/json",
-        "X-RapidAPI-Key": "3cc136d9a1msh29285498c6184d0p1b096fjsn793eaa8b38ba", // Your RapidAPI key
-        "X-RapidAPI-Host": "tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com"
-      },
-    });
+    // Step 1: Search for the first show to get its ID
+    const searchResponse = await fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(show1)}&api_key=${apiKey}`);
+    const searchData = await searchResponse.json();
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Error: ${errorText}`);
+    if (searchData.results.length === 0) {
+      throw new Error(`No TV show found for "${show1}".`);
     }
 
-    const data = await response.json();
-    console.log("Form Submission Data:", data); // Log data for debugging
+    const showId = searchData.results[0].id;
 
-    const recommendations = data.recommendations || [];
+    // Step 2: Get recommendations using the show ID
+    const recommendationResponse = await fetch(`https://api.themoviedb.org/3/tv/${showId}/recommendations?api_key=${apiKey}`);
+    const recommendationData = await recommendationResponse.json();
 
-    if (recommendations.length === 0) {
+    if (recommendationData.results.length === 0) {
       recommendationsList.innerHTML = "<li>No recommendations found.</li>";
       return;
     }
 
-    recommendations.forEach((show) => {
+    recommendationData.results.forEach((show) => {
       const listItem = document.createElement("li");
       listItem.textContent = show.name;
       recommendationsList.appendChild(listItem);
