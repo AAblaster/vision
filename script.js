@@ -7,7 +7,7 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
   recommendationsList.innerHTML = "";
 
   const apiUrl = `https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/search?query=${encodeURIComponent(show1)}`;
-  const apiKey = "cc8da86bfc4354139fcd7c62ca808e10"; // Replace with your actual RapidAPI key
+  const apiKey = "702d33aaedaabc0615108d23f74fb353"; // Replace with your actual RapidAPI key
 
   // Display a loading message
   const loadingMessage = document.createElement("li");
