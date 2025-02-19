@@ -6,7 +6,7 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
   const recommendationsList = document.getElementById("recommendations");
   recommendationsList.innerHTML = "";
 
-  const apiUrl = `https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/search?query=Brooklyn%2099`;
+  const apiUrl = `https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/search`;
   const apiKey = "702d33aaedaabc0615108d23f74fb353"; // Replace with your actual RapidAPI key
 
   // Display a loading message
