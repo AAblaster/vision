@@ -3,7 +3,7 @@ document.getElementById("show-form").addEventListener("submit", async (event) =>
 
   const showName = document.getElementById("show1").value;
   const reason = document.getElementById("reason").value;
-  const apiKey = "YOUR_TMDB_API_KEY"; // Replace with your TMDB API Key
+  const apiKey = "702d33aaedaabc0615108d23f74fb353"; // Replace with your TMDB API Key
   const recommendationsContainer = document.getElementById("recommendations-container");
   const svgContainer = document.getElementById("svg-container");
 
