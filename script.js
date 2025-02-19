@@ -1,64 +1,61 @@
-// Version 1: TMDB Recommendations with Modern Aesthetic
 document.getElementById("show-form").addEventListener("submit", async (event) => {
-  event.preventDefault(); // Prevent form submission from refreshing the page
+  event.preventDefault();
 
-  const show1 = document.getElementById("show1").value; // Input TV show
-  const apiKey = "702d33aaedaabc0615108d23f74fb353"; // Replace with your TMDB API key
-
-  // Clear previous results
+  const showName = document.getElementById("show1").value;
+  const reason = document.getElementById("reason").value;
+  const apiKey = "YOUR_TMDB_API_KEY"; // Replace with your TMDB API Key
   const recommendationsContainer = document.getElementById("recommendations-container");
+  const svgContainer = document.getElementById("svg-container");
+
   recommendationsContainer.innerHTML = "";
-  
-  // Show a loading animation (if you have one in your UI)
-  const loadingMessage = document.createElement("p");
-  loadingMessage.textContent = "Loading recommendations...";
-  recommendationsContainer.appendChild(loadingMessage);
+  svgContainer.innerHTML = "";
 
   try {
-    // Step 1: Search for the TV show by name to get its ID
-    const searchResponse = await fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(show1)}&api_key=${apiKey}`);
-    if (!searchResponse.ok) throw new Error(`Failed to search show: ${searchResponse.statusText}`);
-
+    // Step 1: Search for main show
+    const searchResponse = await fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(showName)}&api_key=${apiKey}`);
     const searchData = await searchResponse.json();
-    if (!searchData.results || searchData.results.length === 0) {
-      throw new Error(`No TV show found for "${show1}".`);
+
+    if (searchData.results.length === 0) {
+      throw new Error(`No TV show found for "${showName}".`);
     }
 
-    const showId = searchData.results[0].id; // Get the first show’s ID
+    const mainShow = searchData.results[0];
+    const mainShowDiv = document.createElement("div");
+    mainShowDiv.id = "main-show";
+    mainShowDiv.textContent = `${mainShow.name} (${reason})`;
+    recommendationsContainer.appendChild(mainShowDiv);
 
-    // Step 2: Fetch recommendations for the show
-    const recommendationResponse = await fetch(`https://api.themoviedb.org/3/tv/${showId}/recommendations?api_key=${apiKey}`);
-    if (!recommendationResponse.ok) throw new Error(`Failed to fetch recommendations: ${recommendationResponse.statusText}`);
+    // Step 2: Fetch recommendations
+    const recommendationsResponse = await fetch(`https://api.themoviedb.org/3/tv/${mainShow.id}/recommendations?api_key=${apiKey}`);
+    const recommendationsData = await recommendationsResponse.json();
 
-    const recommendationData = await recommendationResponse.json();
-    if (!recommendationData.results || recommendationData.results.length === 0) {
-      recommendationsContainer.innerHTML = "<p>No recommendations found.</p>";
-      return;
+    if (recommendationsData.results.length === 0) {
+      throw new Error(`No recommendations found for "${mainShow.name}".`);
     }
 
-    // Step 3: Remove loading message before populating recommendations
-    recommendationsContainer.innerHTML = "";
+    // Step 3: Add recommendations with SVG branches
+    recommendationsData.results.slice(0, 5).forEach((rec, index) => {
+      // Recommendation card
+      const recDiv = document.createElement("div");
+      recDiv.className = "recommendation-show";
+      recDiv.style.top = `${50 + index * 70}px`;
+      recDiv.style.left = `${300}px`;
+      recDiv.textContent = `${rec.name} (Reason: Based on ${mainShow.name})`;
 
-    // Step 4: Create cards for each recommendation
-    recommendationData.results.forEach((show) => {
-      const showCard = document.createElement("div");
-      showCard.className = "recommendation-card"; // Ensure your CSS handles this class
+      // Create SVG line
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("class", "recommendation-branch");
+      line.setAttribute("x1", 200);
+      line.setAttribute("y1", 250);
+      line.setAttribute("x2", 300);
+      line.setAttribute("y2", 50 + index * 70 + 20);
 
-      // Show Name
-      const showName = document.createElement("h3");
-      showName.textContent = show.name;
-
-      // Description (if available)
-      const showDescription = document.createElement("p");
-      showDescription.textContent = show.overview ? show.overview : "No description available.";
-
-      // Append elements to the card
-      showCard.appendChild(showName);
-      showCard.appendChild(showDescription);
-      recommendationsContainer.appendChild(showCard);
+      // Append elements
+      svgContainer.appendChild(line);
+      recommendationsContainer.appendChild(recDiv);
     });
   } catch (error) {
-    console.error("Error fetching recommendations:", error);
+    console.error(error.message);
     recommendationsContainer.innerHTML = `<p>${error.message}</p>`;
   }
 });
