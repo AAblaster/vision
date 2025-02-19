@@ -8,25 +8,17 @@
 </head>
 <body>
   <div class="container">
-    <h1 class="title">TV Show Recommender</h1>
+    <h1>TV Show Recommender</h1>
     <form id="show-form">
-      <div class="input-group">
-        <label for="show1">Show Name</label>
-        <input type="text" id="show1" placeholder="Enter TV show name..." required>
-      </div>
-      <div class="input-group">
-        <label for="reason">Reason You Like It</label>
-        <input type="text" id="reason" placeholder="Why do you like this show?" required>
-      </div>
-      <button type="submit" class="submit-btn">Get Recommendations</button>
+      <input type="text" id="show1" placeholder="Enter Show Name" required>
+      <input type="text" id="reason" placeholder="Reason You Liked It" required>
+      <button type="submit">Get Recommendations</button>
     </form>
-
     <div id="recommendations-container">
-      <h2>Recommendations</h2>
-      <ul id="recommendations" class="recommendations-list"></ul>
+      <div id="main-show"></div>
+      <svg id="svg-container"></svg>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
