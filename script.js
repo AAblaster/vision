@@ -1,53 +1,64 @@
+// Version 1: TMDB Recommendations with Modern Aesthetic
 document.getElementById("show-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
+  event.preventDefault(); // Prevent form submission from refreshing the page
 
-  const show1 = document.getElementById("show1").value;
-  const reason = document.getElementById("reason").value;
-  const recommendationsList = document.getElementById("recommendations");
-  recommendationsList.innerHTML = "";
+  const show1 = document.getElementById("show1").value; // Input TV show
+  const apiKey = "702d33aaedaabc0615108d23f74fb353"; // Replace with your TMDB API key
 
-  const apiUrl = `https://tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com/v1/tmdb/search?query=${encodeURIComponent(show1)}`;
-  const apiKey = "702d33aaedaabc0615108d23f74fb353"; // Replace with your actual RapidAPI key
-
-  // Display a loading message
-  const loadingMessage = document.createElement("li");
+  // Clear previous results
+  const recommendationsContainer = document.getElementById("recommendations-container");
+  recommendationsContainer.innerHTML = "";
+  
+  // Show a loading animation (if you have one in your UI)
+  const loadingMessage = document.createElement("p");
   loadingMessage.textContent = "Loading recommendations...";
-  recommendationsList.appendChild(loadingMessage);
+  recommendationsContainer.appendChild(loadingMessage);
 
   try {
-    // Fetch recommendations using the API
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "X-RapidAPI-Key": apiKey,
-        "X-RapidAPI-Host": "tmdb-movies-and-tv-shows-api-by-apirobots.p.rapidapi.com"
-      }
+    // Step 1: Search for the TV show by name to get its ID
+    const searchResponse = await fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(show1)}&api_key=${apiKey}`);
+    if (!searchResponse.ok) throw new Error(`Failed to search show: ${searchResponse.statusText}`);
+
+    const searchData = await searchResponse.json();
+    if (!searchData.results || searchData.results.length === 0) {
+      throw new Error(`No TV show found for "${show1}".`);
+    }
+
+    const showId = searchData.results[0].id; // Get the first show’s ID
+
+    // Step 2: Fetch recommendations for the show
+    const recommendationResponse = await fetch(`https://api.themoviedb.org/3/tv/${showId}/recommendations?api_key=${apiKey}`);
+    if (!recommendationResponse.ok) throw new Error(`Failed to fetch recommendations: ${recommendationResponse.statusText}`);
+
+    const recommendationData = await recommendationResponse.json();
+    if (!recommendationData.results || recommendationData.results.length === 0) {
+      recommendationsContainer.innerHTML = "<p>No recommendations found.</p>";
+      return;
+    }
+
+    // Step 3: Remove loading message before populating recommendations
+    recommendationsContainer.innerHTML = "";
+
+    // Step 4: Create cards for each recommendation
+    recommendationData.results.forEach((show) => {
+      const showCard = document.createElement("div");
+      showCard.className = "recommendation-card"; // Ensure your CSS handles this class
+
+      // Show Name
+      const showName = document.createElement("h3");
+      showName.textContent = show.name;
+
+      // Description (if available)
+      const showDescription = document.createElement("p");
+      showDescription.textContent = show.overview ? show.overview : "No description available.";
+
+      // Append elements to the card
+      showCard.appendChild(showName);
+      showCard.appendChild(showDescription);
+      recommendationsContainer.appendChild(showCard);
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch recommendations. Please try again.");
-    }
-
-    const data = await response.json();
-    const recommendations = data.results;
-
-    // Clear loading message
-    recommendationsList.innerHTML = "";
-
-    if (recommendations.length === 0) {
-      const noResultsMessage = document.createElement("li");
-      noResultsMessage.textContent = "No recommendations found.";
-      recommendationsList.appendChild(noResultsMessage);
-    } else {
-      // Display each recommendation with a reason
-      recommendations.forEach((show) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${show.title || show.name} - You might like this because: ${reason}`;
-        recommendationsList.appendChild(listItem);
-      });
-    }
   } catch (error) {
     console.error("Error fetching recommendations:", error);
-    recommendationsList.innerHTML = `<li>Error fetching recommendations. Try again later.</li>`;
+    recommendationsContainer.innerHTML = `<p>${error.message}</p>`;
   }
 });
